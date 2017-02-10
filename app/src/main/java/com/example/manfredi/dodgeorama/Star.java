@@ -11,9 +11,9 @@ public class Star extends Entity {
     private int mColor;
     private int mDistance;
     private int mSize;
-    private final int BIG_SIZE_STAR = 4;
+    private final int BIG_SIZE_STAR = 2;
     private final int MEDIUM_SIZE_STAR = 3;
-    private final int SMALL_SIZE_STAR = 2;
+    private final int SMALL_SIZE_STAR = 4;
     private final int FAST_SPEED = 30;
     private final int MEDIUM_SPEED = 20;
     private final int SLOW_SPEED = 10;
@@ -21,12 +21,18 @@ public class Star extends Entity {
     private final int MEDIUM_DISTANCE = 1;
     private final int BIG_DISTANCE = 2;
 
+    public Star(int x, int y, int color, int distance) {
+        super(x, y);
+        this.mColor = color;
+        this.mDistance = distance;
+    }
+
     public int getSize() {
-        setSize();
+        setSizeAndSpeed();
         return mSize;
     }
 
-    public void setSize() {
+    public void setSizeAndSpeed() {
         switch (this.mDistance) {
             case SMALL_DISTANCE:
                 this.mSize = BIG_SIZE_STAR;
@@ -43,26 +49,12 @@ public class Star extends Entity {
         }
     }
 
-    public Star(int mX, int mY, int mColor, int mDistance) {
-        super(mX, mY);
-        this.mColor = mColor;
-        this.mDistance = mDistance;
-    }
-
     public int getColor() {
         return mColor;
     }
 
-    public void setColor(int mColor) {
-        this.mColor = mColor;
-    }
-
     public int getDistance() {
         return mDistance;
-    }
-
-    public void setDistance(int mDistance) {
-        this.mDistance = mDistance;
     }
 
     public void render(Canvas canvas, Paint paint) {

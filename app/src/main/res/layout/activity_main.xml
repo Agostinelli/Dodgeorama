@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:maxHeight="450dp"
         android:maxWidth="200dp"
-        app:srcCompat="@drawable/back"
+        app:srcCompat="@drawable/background"
         android:id="@+id/imageView"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"

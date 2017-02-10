@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         final ImageView mImageView;
         mImageView = (ImageView) findViewById(R.id.imageView);
-        mImageView.setImageResource(R.drawable.back);
+        mImageView.setImageResource(R.drawable.background);
 
         SharedPreferences prefs = getSharedPreferences(GameView.PREF, Context.MODE_PRIVATE);
         int longestDistance = prefs.getInt(GameView.LONGEST_DISTANCE, 0);

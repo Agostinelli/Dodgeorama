@@ -22,6 +22,10 @@ public class Jukebox {
     private SoundPool mSoundPoll;
     private final int MAX_STREAMS = 5;
     public static int BUMP;
+    private final float MAX_VOLUME = 1.0f;
+    private final int MAX_PRIORITY = 1;
+    private final int NO_LOOP = 0;
+    private final float NORMAL_PLAYBACK = 1.0f;
 
 
     public Jukebox(Context context) {
@@ -35,11 +39,11 @@ public class Jukebox {
     }
 
     public void play(final int soundID) {
-        float leftVolume = 1.0f;
-        float rightVoulme = 1.0f;
-        int priority = 1;
-        int loop = 0;
-        float rate = 1.0f;
+        float leftVolume = MAX_VOLUME;
+        float rightVoulme = MAX_VOLUME;
+        int priority = MAX_PRIORITY;
+        int loop = NO_LOOP;
+        float rate = NORMAL_PLAYBACK;
         if(soundID > 0) {
             mSoundPoll.play(soundID, leftVolume, rightVoulme, priority, loop, rate);
         }

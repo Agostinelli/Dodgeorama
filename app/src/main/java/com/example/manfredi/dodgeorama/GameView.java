@@ -47,6 +47,8 @@ public class GameView extends SurfaceView implements Runnable {
     private final int CYAN = 2;
     private final int RED = 3;
     private final int GREEN = 4;
+    private final int MAX_DISTANCE_LEVEL = 3;
+    private final int MAX_SHIP_TYPE = 3;
 
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
@@ -71,13 +73,13 @@ public class GameView extends SurfaceView implements Runnable {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_UP: // finger lifted
+            case MotionEvent.ACTION_UP:
                 mPlayer.stopBoost();
                 if(mGameOver) {
                     startGame();
                 }
                 break;
-            case MotionEvent.ACTION_DOWN: // finger pressed
+            case MotionEvent.ACTION_DOWN:
                 mPlayer.startBoost();
                 break;
         }
@@ -92,11 +94,11 @@ public class GameView extends SurfaceView implements Runnable {
         for(int i = 0; i < STAR_COUNT; i++) {
             int x = rand.nextInt(STAGE_WIDTH);
             int y =  rand.nextInt(STAGE_HEIGHT);
-            int distance = rand.nextInt(3);
+            int distance = rand.nextInt(MAX_DISTANCE_LEVEL);
             mStars.add(new Star(x, y, randomColor(), distance));
         }
         for(int i = 0; i < ENEMY_COUNT; i++) {
-            int shipType = rand.nextInt(3);
+            int shipType = rand.nextInt(MAX_SHIP_TYPE);
             mEnemies.add(new Enemy(mContext, shipType));
         }
         mGameOver = false;
@@ -130,11 +132,9 @@ public class GameView extends SurfaceView implements Runnable {
         return color;
     }
 
-    // core game loop
     @Override
     public void run() {
         while(mIsRunning) {
-            // input
             update();
             render();
             checkGameOver();

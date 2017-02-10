@@ -16,8 +16,8 @@ public class Player extends Entity {
     private static final int GRAVITY = 12;
     private Rect mBoundingBox;
     private int mShield;
-    private final int FORWARD = 2;
-    private final int BACKWARD = 4;
+    private final int SPEED_UP = 2;
+    private final int SLOW_DOWN = 4;
 
 
 
@@ -71,10 +71,10 @@ public class Player extends Entity {
 
     public void update() {
         if (mIsBoosting) {
-            mSpeed += FORWARD;
+            mSpeed += SPEED_UP;
         }
         else {
-            mSpeed -= BACKWARD;
+            mSpeed -= SLOW_DOWN;
         }
         mSpeed = clamp(mSpeed, MIN_SPEED, MAX_SPEED);
 
@@ -84,7 +84,6 @@ public class Player extends Entity {
 
     public void onCollision() {
         mShield--;
-        //if (mShield < 0) {}
     }
 
     public Rect getBoundingBox() {
