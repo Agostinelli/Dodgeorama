@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Dodgeorama</string>
+    <string name="startgame_button_text">StartGame</string>
+    <string name="speed">"Speed: "</string>
+    <string name="shield">"Shield: "</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="restart">Tap to Restart!</string>
+    <string name="sounderror">"Error loading sound "</string>
+    <string name="bumpSound">bump.ogg</string>
+    <string name="startSound">start.ogg</string>
+</resources>
