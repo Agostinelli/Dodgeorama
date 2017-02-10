@@ -3,5 +3,6 @@
     <integer name="STAGE_HEIGHT">720</integer>
     <integer name="target_height">72</integer>
     <integer name="shield">3</integer>
+    <integer name="gravity">12</integer>
 
 </resources>

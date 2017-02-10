@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.util.Log;
 
 /**
  * Created by Manfredi on 05/02/2017.
@@ -12,13 +11,15 @@ import android.util.Log;
 
 public class Player extends Entity {
 
-    private Bitmap mBitmap;
 
     private boolean mIsBoosting;
-    private static final int MIN_SPEED = 1;
-    private static final int MAX_SPEED = 20;
     private static final int GRAVITY = 12;
     private Rect mBoundingBox;
+    private int mShield;
+    private final int FORWARD = 2;
+    private final int BACKWARD = 4;
+
+
 
     public int getShieldLevel() {
         return mShield;
@@ -28,7 +29,6 @@ public class Player extends Entity {
         this.mShield = shield;
     }
 
-    private int mShield = 3; // TODO magic value
 
 
     public Player(Context context) {
@@ -51,12 +51,6 @@ public class Player extends Entity {
     @Override
     public int getHeight() {return mBitmap.getHeight();}
 
-    public Bitmap getBitmap() {
-        return mBitmap;
-    }
-
-
-
     public void startBoost() {
         mIsBoosting = true;
     }
@@ -77,10 +71,10 @@ public class Player extends Entity {
 
     public void update() {
         if (mIsBoosting) {
-            mSpeed += 2;
+            mSpeed += FORWARD;
         }
         else {
-            mSpeed -= 4;
+            mSpeed -= BACKWARD;
         }
         mSpeed = clamp(mSpeed, MIN_SPEED, MAX_SPEED);
 
@@ -90,9 +84,7 @@ public class Player extends Entity {
 
     public void onCollision() {
         mShield--;
-        if (mShield < 0) {
-            Log.d("Error", "Dead");
-        }
+        //if (mShield < 0) {}
     }
 
     public Rect getBoundingBox() {

@@ -13,18 +13,25 @@ import java.util.Random;
 
 public class Enemy extends Entity {
 
-    private Bitmap mBitmap;
+
     private Rect mBoundingBox;
     private int mBaseSpeed;
-    private static final int MIN_SPEED = 1;
-    private static final int MAX_SPEED = 20;
+    private int mShipType;
+    private final double ACCELERATION = 0.25;
+    private final int SHIP_TYPE_1 = 0;
+    private final int SHIP_TYPE_2 = 1;
+    private final int SHIP_TYPE_3 = 2;
 
-    public Enemy(Context context) {
+
+
+    public Enemy(Context context, int shipType) {
         super();
 
+        this.mShipType = shipType;
+
         Bitmap temp = BitmapFactory.decodeResource(
-                context.getResources(), R.drawable.ship2);
-        double targetHeight = 72; // TODO: move value out of code
+                context.getResources(), getShipAsset());
+        double targetHeight = context.getResources().getInteger(R.integer.target_height);
         double scalingRatio = targetHeight/temp.getHeight();
         int newHeight = (int) (temp.getHeight() * scalingRatio);
         int newWidth = (int) (temp.getWidth() * scalingRatio);
@@ -38,26 +45,27 @@ public class Enemy extends Entity {
     @Override
     public int getHeight() {return mBitmap.getHeight();}
 
-    public Bitmap getBitmap() {
-        return mBitmap;
-    }
+    private int getShipAsset() {
+        int asset = 0;
 
-
-
-    public static int clamp(int val, final int min, final int max) {
-        if (val < min) {
-            val = min;
+        switch (mShipType) {
+            case SHIP_TYPE_1:
+                asset = R.drawable.ship2;
+                break;
+            case SHIP_TYPE_2:
+                asset = R.drawable.ship3;
+                break;
+            case SHIP_TYPE_3:
+                asset = R.drawable.ship4;
+                break;
         }
-        else if (val > max) {
-            val = max;
-        }
-        return val;
+        return asset;
     }
 
     public void respawn() {
         Random r = new Random();
         mBaseSpeed = r.nextInt(MAX_SPEED);
-        int maxOffset = (int) (((double)GameView.STAGE_WIDTH) * 0.25);
+        int maxOffset = (int) (((double)GameView.STAGE_WIDTH) * ACCELERATION);
         mX = GameView.STAGE_WIDTH + r.nextInt(maxOffset);
         mY = r.nextInt(GameView.STAGE_HEIGHT);
         mBoundingBox = new Rect(mX, mY, mX+mBitmap.getWidth(), mY+mBitmap.getHeight());

@@ -1,5 +1,8 @@
 package com.example.manfredi.dodgeorama;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
 /**
  * Created by Manfredi on 10/02/2017.
  */
@@ -8,6 +11,15 @@ public class Star extends Entity {
     private int mColor;
     private int mDistance;
     private int mSize;
+    private final int BIG_SIZE_STAR = 4;
+    private final int MEDIUM_SIZE_STAR = 3;
+    private final int SMALL_SIZE_STAR = 2;
+    private final int FAST_SPEED = 30;
+    private final int MEDIUM_SPEED = 20;
+    private final int SLOW_SPEED = 10;
+    private final int SMALL_DISTANCE = 0;
+    private final int MEDIUM_DISTANCE = 1;
+    private final int BIG_DISTANCE = 2;
 
     public int getSize() {
         setSize();
@@ -16,17 +28,17 @@ public class Star extends Entity {
 
     public void setSize() {
         switch (this.mDistance) {
-            case 0:
-                this.mSize = 4;
-                this.mSpeed = 10;
+            case SMALL_DISTANCE:
+                this.mSize = BIG_SIZE_STAR;
+                this.mSpeed = SLOW_SPEED;
                 break;
-            case 1:
-                this.mSize = 3;
-                this.mSpeed = 20;
+            case MEDIUM_DISTANCE:
+                this.mSize = MEDIUM_SIZE_STAR;
+                this.mSpeed = MEDIUM_SPEED;
                 break;
-            case 2:
-                this.mSize = 2;
-                this.mSpeed = 30;
+            case BIG_DISTANCE:
+                this.mSize = SMALL_SIZE_STAR;
+                this.mSpeed = FAST_SPEED;
                 break;
         }
     }
@@ -51,6 +63,11 @@ public class Star extends Entity {
 
     public void setDistance(int mDistance) {
         this.mDistance = mDistance;
+    }
+
+    public void render(Canvas canvas, Paint paint) {
+        paint.setColor(this.getColor());
+        canvas.drawCircle(this.getX(), this.getY(), this.getSize(), paint);
     }
 
 }

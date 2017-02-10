@@ -11,8 +11,6 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         mGame = new GameView(this);
         setContentView(mGame);
-
-        //getWindowManager().getDefaultDisplay().getSize();
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -32,8 +31,8 @@ public class GameView extends SurfaceView implements Runnable {
     public static final String PREF = "com.example.manfredi.dodgeorama";
     public static final String LONGEST_DISTANCE = "longest_distance";
 
-    private final int DELAY = 1000/60; // ms / target frames per second
-    public static final int STAGE_HEIGHT = 720; // getContext().getResources().getInteger(R.integer.maximum);
+    private final int DELAY = 1000/60;
+    public static final int STAGE_HEIGHT = 720;
     private final int STAR_COUNT = 40;
     private final int SHIELD_LEVEL = 3;
     public static final int STAGE_WIDTH = 1280;
@@ -42,10 +41,18 @@ public class GameView extends SurfaceView implements Runnable {
     private static final int ENEMY_COUNT = 4;
     private int mDistanceTraveled = 0;
     private int mLongestDistanceTraveled = 0;
+    private final int MAX_COLOR_COUNT = 5;
+    private final int YELLOW = 0;
+    private final int WHITE = 1;
+    private final int CYAN = 2;
+    private final int RED = 3;
+    private final int GREEN = 4;
 
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
     private Jukebox mJukebox;
+
+    HUD mHud = new HUD();
 
 
     public GameView(Context context) {
@@ -85,11 +92,12 @@ public class GameView extends SurfaceView implements Runnable {
         for(int i = 0; i < STAR_COUNT; i++) {
             int x = rand.nextInt(STAGE_WIDTH);
             int y =  rand.nextInt(STAGE_HEIGHT);
-            int distance = rand.nextInt(3); //0,1,2
+            int distance = rand.nextInt(3);
             mStars.add(new Star(x, y, randomColor(), distance));
         }
         for(int i = 0; i < ENEMY_COUNT; i++) {
-            mEnemies.add(new Enemy(mContext));
+            int shipType = rand.nextInt(3);
+            mEnemies.add(new Enemy(mContext, shipType));
         }
         mGameOver = false;
         mPlayer.setShieldLevel(SHIELD_LEVEL);
@@ -101,45 +109,25 @@ public class GameView extends SurfaceView implements Runnable {
 
     private int randomColor() {
         Random rand = new Random();
-        int n = rand.nextInt(5);
+        int n = rand.nextInt(MAX_COLOR_COUNT);
         int color = 0;
         switch (n) {
-            case 0:
+            case YELLOW:
                 color = Color.YELLOW;
                 break;
-            case 1:
+            case WHITE:
                 color = Color.WHITE;
                 break;
-            case 2:
+            case CYAN:
                 color = Color.CYAN;
                 break;
-            case 3:
+            case RED:
                 color = Color.RED;
                 break;
-            case 4:
+            case GREEN:
                 color = Color.GREEN;
         }
         return color;
-    }
-
-    private static String getDensityName(DisplayMetrics dm) {
-        float density = dm.density;
-        if (density >= 4.0) {
-            return "xxxhigh density";
-        }
-        if (density >= 3.0) {
-            return "xxhigh density";
-        }
-        if (density >= 2.0) {
-            return "xhigh density";
-        }
-        if (density >= 1.5) {
-            return "high density";
-        }
-        if (density >= 1.0) {
-            return "medium density";
-        }
-        return "low density";
     }
 
     // core game loop
@@ -168,23 +156,6 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    private void checkBounds() {
-        final int maxX = STAGE_WIDTH-mPlayer.getWidth();
-        final int maxY = STAGE_HEIGHT-mPlayer.getHeight();
-        if(mPlayer.getX() < 0) {
-            mPlayer.setX(0);
-        }
-        else if (mPlayer.getX() > maxX) {
-            mPlayer.setX(maxX);
-        }
-        if(mPlayer.getY() < 0) {
-            mPlayer.setY(0);
-        }
-        else if (mPlayer.getY() > maxY) {
-            mPlayer.setY(maxY);
-        }
-    }
-
     private void worldWrap(Entity e) {
         final int minX = -e.getWidth();
         final int minY = -e.getHeight();
@@ -205,24 +176,6 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    private void drawHUD() {
-        int textHeight = 45;
-        mPaint.setColor(Color.WHITE);
-        mPaint.setTextAlign(Paint.Align.LEFT);
-        mPaint.setTextSize(textHeight);
-        mCanvas.drawText(getContext().getString(R.string.speed) + mPlayer.getSpeed(), 10, textHeight, mPaint);
-        mCanvas.drawText(getContext().getString(R.string.shield) + mPlayer.getShieldLevel(), STAGE_WIDTH*0.5f, textHeight, mPaint);
-
-    }
-
-    private void drawGameOverHUD() {
-        int textHeight = 80;
-        mPaint.setColor(Color.WHITE);
-        mPaint.setTextAlign(Paint.Align.CENTER);
-        mPaint.setTextSize(textHeight);
-        mCanvas.drawText(getContext().getString(R.string.game_over), STAGE_WIDTH*0.5f, textHeight*2, mPaint);
-        mCanvas.drawText(getContext().getString(R.string.restart), STAGE_WIDTH*0.5f, STAGE_HEIGHT-(textHeight*2),mPaint);
-    }
 
     private void rateLimit() {
         try {
@@ -268,31 +221,31 @@ public class GameView extends SurfaceView implements Runnable {
             return;
         }
         mCanvas = mHolder.lockCanvas();
+
         if (mCanvas == null) {
             return;
         }
         mCanvas.drawColor(Color.BLACK);
 
         for(Star star : mStars) {
-            mPaint.setColor(star.getColor());
-            mCanvas.drawCircle(star.getX(), star.getY(), star.getSize(), mPaint);
+            star.render(mCanvas, mPaint);
         }
 
         mPaint.setColor(Color.WHITE);
+
         for(Enemy enemy : mEnemies) {
-            mCanvas.drawBitmap(enemy.getBitmap(), enemy.getX(), enemy.getY(), mPaint);
+            enemy.render(mCanvas, mPaint);
         }
-        mCanvas.drawBitmap(mPlayer.getBitmap(), mPlayer.getX(), mPlayer.getY(), mPaint);
+        mPlayer.render(mCanvas, mPaint);
 
         if(!mGameOver) {
-            drawHUD();
+            mHud.drawHUD(mContext, mPaint, mCanvas, mPlayer);
         }
         else {
-            drawGameOverHUD();
+            mHud.drawGameOverHUD(mContext, mPaint, mCanvas);
         }
 
         mHolder.unlockCanvasAndPost(mCanvas);
-
     }
 
     public void pause() {
@@ -323,6 +276,8 @@ public class GameView extends SurfaceView implements Runnable {
         mPlayer = null;
         mPrefs = null;
         mEditor = null;
+        mHud = null;
+
         mStars.clear();
         mEnemies.clear();
     }

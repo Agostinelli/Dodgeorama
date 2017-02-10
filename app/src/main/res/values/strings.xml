@@ -8,4 +8,5 @@
     <string name="sounderror">"Error loading sound "</string>
     <string name="bumpSound">bump.ogg</string>
     <string name="startSound">start.ogg</string>
+    <string name="bestScore">"Best score: "</string>
 </resources>
