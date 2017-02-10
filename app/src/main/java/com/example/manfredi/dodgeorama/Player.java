@@ -36,14 +36,14 @@ public class Player extends Entity {
         mIsBoosting = false;
         Bitmap temp = BitmapFactory.decodeResource(
                 context.getResources(), R.drawable.ship1);
-        double targetHeight = 72; //TODO hardcoded value
+        double targetHeight = context.getResources().getInteger(R.integer.target_height);
         double scalingRatio = targetHeight/temp.getHeight();
         int newHeight = (int) (temp.getHeight() * scalingRatio);
         int newWidth = (int) (temp.getWidth() * scalingRatio);
         mBitmap = Bitmap.createScaledBitmap(temp, newWidth, newHeight, true);
         temp.recycle();
         mBoundingBox = new Rect(mX, mY, mX+mBitmap.getWidth(), mY+mBitmap.getHeight());
-        mShield = 3;
+        mShield = context.getResources().getInteger(R.integer.shield);
     }
     @Override
     public int getWidth() {return mBitmap.getWidth();}

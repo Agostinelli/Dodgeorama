@@ -45,15 +45,10 @@ public class Entity {
     }
 
     public int getWidth() {return 0;}
-    public int getHeight() {return 0;}
 
+    public int getHeight() {return 0;}
 
     public void update() {
         mX += mSpeed;
     }
-
-    public void render() {
-
-    }
-
 }

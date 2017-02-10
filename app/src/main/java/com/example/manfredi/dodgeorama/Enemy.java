@@ -18,6 +18,7 @@ public class Enemy extends Entity {
     private int mBaseSpeed;
     private static final int MIN_SPEED = 1;
     private static final int MAX_SPEED = 20;
+
     public Enemy(Context context) {
         super();
 

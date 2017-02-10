@@ -33,11 +33,11 @@ public class GameView extends SurfaceView implements Runnable {
     public static final String LONGEST_DISTANCE = "longest_distance";
 
     private final int DELAY = 1000/60; // ms / target frames per second
-    public static final int STAGE_HEIGHT = 720;
+    public static final int STAGE_HEIGHT = 720; // getContext().getResources().getInteger(R.integer.maximum);
     private final int STAR_COUNT = 40;
     private final int SHIELD_LEVEL = 3;
     public static final int STAGE_WIDTH = 1280;
-    private ArrayList<Entity> mStars;
+    private ArrayList<Star> mStars;
     private ArrayList<Enemy> mEnemies;
     private static final int ENEMY_COUNT = 4;
     private int mDistanceTraveled = 0;
@@ -78,14 +78,15 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void startGame() {
-        mStars = new ArrayList<Entity>();
+        mStars = new ArrayList<Star>();
         mEnemies = new ArrayList<Enemy>();
         Random rand = new Random();
         mPlayer = new Player(mContext);
         for(int i = 0; i < STAR_COUNT; i++) {
             int x = rand.nextInt(STAGE_WIDTH);
             int y =  rand.nextInt(STAGE_HEIGHT);
-            mStars.add(new Entity(x, y));
+            int distance = rand.nextInt(3); //0,1,2
+            mStars.add(new Star(x, y, randomColor(), distance));
         }
         for(int i = 0; i < ENEMY_COUNT; i++) {
             mEnemies.add(new Enemy(mContext));
@@ -96,6 +97,29 @@ public class GameView extends SurfaceView implements Runnable {
         mDistanceTraveled = 0;
         mLongestDistanceTraveled = mPrefs.getInt(LONGEST_DISTANCE, 0);
         mJukebox.play(Jukebox.START);
+    }
+
+    private int randomColor() {
+        Random rand = new Random();
+        int n = rand.nextInt(5);
+        int color = 0;
+        switch (n) {
+            case 0:
+                color = Color.YELLOW;
+                break;
+            case 1:
+                color = Color.WHITE;
+                break;
+            case 2:
+                color = Color.CYAN;
+                break;
+            case 3:
+                color = Color.RED;
+                break;
+            case 4:
+                color = Color.GREEN;
+        }
+        return color;
     }
 
     private static String getDensityName(DisplayMetrics dm) {
@@ -213,8 +237,8 @@ public class GameView extends SurfaceView implements Runnable {
         mPlayer.update();
         worldWrap(mPlayer);
 
-        for(Entity star : mStars) {
-            star.setSpeed(-mPlayer.getSpeed());
+        for(Star star : mStars) {
+            star.setSpeed(-mPlayer.getSpeed()-star.getSpeed());
             star.update();
             worldWrap(star);
         }
@@ -247,14 +271,14 @@ public class GameView extends SurfaceView implements Runnable {
         if (mCanvas == null) {
             return;
         }
-        mCanvas.drawColor(Color.BLACK); // fill the screen with black
+        mCanvas.drawColor(Color.BLACK);
 
-        mPaint.setColor(Color.WHITE);
-
-        for(Entity star : mStars) {
-            mCanvas.drawCircle(star.getX(), star.getY(), 2, mPaint);
+        for(Star star : mStars) {
+            mPaint.setColor(star.getColor());
+            mCanvas.drawCircle(star.getX(), star.getY(), star.getSize(), mPaint);
         }
 
+        mPaint.setColor(Color.WHITE);
         for(Enemy enemy : mEnemies) {
             mCanvas.drawBitmap(enemy.getBitmap(), enemy.getX(), enemy.getY(), mPaint);
         }

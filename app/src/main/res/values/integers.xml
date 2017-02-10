@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="STAGE_HEIGHT">720</integer>
+    <integer name="target_height">72</integer>
+    <integer name="shield">3</integer>
+
+</resources>
